@@ -1,0 +1,73 @@
+---
+title: "Chapter JMG 3.5"
+subtitle: "Logistic Regression"
+output:
+  html_document: default
+  pdf_document:
+    number_sections: yes
+---
+
+# Logistic Regression
+
+## Learning Objectives
+
+```{r load_packages, message = FALSE}
+# Packages required for Chapter 3.5
+library(gridExtra)
+library(knitr)
+library(kableExtra)
+library(mosaic)
+library(xtable)
+library(pscl) 
+library(multcomp)
+library(pander)
+library(MASS)
+library(tidyverse)
+library(faraway)
+library(patchwork)
+```
+
+```{r include=FALSE}
+if(knitr::is_html_output()){options(knitr.table.format = "html")} else {options(knitr.table.format = "latex")}
+```
+
+
+
+```{r interleaved_hists, fig.align="center",out.width="60%", fig.cap='Interleaved histograms of the distribution of heights and cigarette usage for men with and without heart disease.',echo=FALSE, warning=FALSE, message=FALSE}
+p1 <- wcgs %>% ggplot(aes(x=height,color=chd)) + geom_histogram(position = "dodge",binwidth = 1)
+p2 <- wcgs %>% ggplot(aes(x=cigs,color=chd)) + geom_histogram(position = "dodge",binwidth = 5,aes(y=..density..))
+p1 + p2
+```
+
+
+```{r covariates, fig.align="center",out.width="60%", fig.cap='Height and cigarette consumption displayed by heart disease status.',echo=FALSE, warning=FALSE, message=FALSE}
+wcgs %>% ggplot(aes(x=height,y=cigs)) + geom_point(alpha=0.2,position = position_jitter()) + facet_grid(~chd)
+```
+
+```{r}
+tibble(x=c(-6,6)) %>% ggplot(aes(x=x)) + geom_function(fun=ilogit) + 
+  labs(x="eta",y="p")
+```
+
+
+```{r}
+lmod <- glm(chd ~ height + cigs,data=wcgs,family=binomial)
+```
+
+```{r}
+summary(lmod)
+```
+
+
+```{r}
+lmod %>% broom::tidy()
+```
+
+```{r}
+lmod %>% broom::glance()
+```
+
+
+
+
+
